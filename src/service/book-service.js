@@ -4,18 +4,20 @@ const {StatusCodes} = require('http-status-codes');
 const AppError = require('../utils/error/app-error')
 
 const book_Repository = new Book_Repository();
-
-
   async function createBook(data) {
-    const book  =  await book_Repository.create(data);
-    return book;
+    try {
+       const book  =  await book_Repository.create(data);
+       return book;
+    } catch (error) {
+      throw new AppError('Something went wrong while creating the book',StatusCodes.INTERNAL_SERVER_ERROR,'ERROR HAPPENED AT THE SERVR PART')
+    }
   }
 
   async function getBook(id) {
     try {
     const book = await book_Repository.get(id)
     if(!book){
-      throw new AppError('Something Went Wrong',StatusCodes.BAD_REQUEST,'the book id does not exist');
+      throw new AppError('BOOK NOT FOUND',StatusCodes.BAD_REQUEST,'the book id does not exist');
     }
     return book;
       
@@ -23,36 +25,59 @@ const book_Repository = new Book_Repository();
       if(error instanceof AppError){
         throw error
       }
-      throw error
+      throw new AppError('Something went wrong while getting the book',StatusCodes.INTERNAL_SERVER_ERROR,'ERROR HAPPENED AT THE SERVR PART')
     }
   }
 
   async function getAllBooks() {
+   try {
     const books = await book_Repository.getAll();
     return books;
+   } catch (error) {
+    throw new AppError('Something went Wrong while getting all the books',StatusCodes.INTERNAL_SERVER_ERROR,'Error Happened at the sever part');
+   }
   }
   
   async function destroyBook(id) {
-    const  book = await book_Repository.destroy({
+   try {
+     const response = await book_Repository.destroy({
       where : {
         id : id 
       }
     });
-    return book;
+    if(response==0){
+     throw new AppError('BOOK NOT FOUND',StatusCodes.BAD_REQUEST,'The book id does not exist');
+    }
+    return response;
+   } catch (error) {
+    if(error instanceof AppError){
+      throw error
+    }
+    throw new AppError('Something went Wrong while destroying',StatusCodes.INTERNAL_SERVER_ERROR,'Error Happened at the sever part');
+   }
   }
+
+
   async function updateBook(data,id) {
     
-    const  book = await book_Repository.update(data,{
+    try {
+      const  response = await book_Repository.update(data,{
       where : {
         id : id
       }
     });
-    return book;
+    if(response==0){
+     throw new AppError('BOOK NOT FOUND',StatusCodes.BAD_REQUEST,'The book id does not exist');
+    }
+    return response;
+      
+    } catch (error) {
+      if(error instanceof AppError){
+      throw error
+    }
+    throw new AppError('Something went Wrong while updating',StatusCodes.INTERNAL_SERVER_ERROR,'Error Happened at the sever part');
+    }
   }
-
-
-
-
 
   module.exports = {
     createBook,
