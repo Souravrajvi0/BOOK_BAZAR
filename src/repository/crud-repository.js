@@ -20,6 +20,7 @@ class CRUD_REPOSITORY {
 
     async destroy(filter){
         const response = await this.model.destroy(filter);
+        console.log(response)
         return response;
     }
 

@@ -1,6 +1,5 @@
 'use strict';
 const {GENRE} = require('../utils/common/enums');
-console.log(GENRE);
 const {FICTION,NON_FICTION,MYSTERY,ROMANCE,SCIENCE_FICTION,FANTASY,HISTORICAL_FICTION,HORROR,BIOGRAPHY,SELF_HELP} = GENRE;
 const {
   Model
